@@ -1,0 +1,2 @@
+gearman==2.0.2
+pyCrypto==2.6
