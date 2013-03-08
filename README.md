@@ -9,7 +9,6 @@ How it works
 #Example code for worker:
 
 	import aesgearman
-	aesgearman.AESKEY = 'this_is_the_password'
 	
 	def hello( gearman_worker, gearman_job ):
 		print "The data:"
@@ -23,7 +22,6 @@ How it works
 #Example code for client:
 
 	import aesgearman
-	aesgearman.AESKEY = 'this_is_the_password'
 	
 	gm_client = aesgearman.AESJSON_GearmanClient( ['127.0.0.1:4730'] )
 	
