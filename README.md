@@ -6,29 +6,53 @@ Python classmethod to use JSON + AES an Gearman client/server at easy way.
 How it works
 ============
 
-#Example code for worker:
+#Example code for worker (AES-192):
 
-	import aesgearman
-	
-	def hello( gearman_worker, gearman_job ):
-		print "The data:"
-		print gearman_job.data
-		return "Hello works!"
-		
-	gm_worker = aesgearman.AESJSON_GearmanWorker( ['127.0.0.1:4730'] )
-	gm_worker.register_task( 'hello', hello )
+    ```python
+    import __init__ as aesgearman
+    import datetime;
+
+    def aesjsontest( gearman_worker, gearman_job ):
+
+        response = { 
+            'data_from_client': gearman_job.data,
+            'hola': 'bon dia!',
+            'chao': ('bye','adios','adeu'),
+            'date': str( datetime.datetime.now() ),
+        };
+
+        return response
+
+    gm_worker = aesgearman.AESJSON_GearmanWorker( ['localhost'], aeskey='123456781234567812345678' )
+    s = gm_worker.register_task( 'aesjsontest', aesjsontest )
+    gm_worker.work()
+    ```
+
   
 
-#Example code for client:
+#Example code for client (AES-192):
 
-	import aesgearman
-	
-	gm_client = aesgearman.AESJSON_GearmanClient( ['127.0.0.1:4730'] )
-	
-	data_to_send = {
-		'key1': 'Value 1',
-		'key2': 'Value 2',
-	}
-	
-	gm_client.submit_job( 'hello', data_to_send )
-  
+    ```python
+    import aesgearman
+
+    gm_client = aesgearman.AESJSON_GearmanClient( ['localhost'], aeskey='123456781234567812345678' )
+    s = gm_client.submit_job( 'aesjsontest', ('Testing the complex data by AES',True,), background=False )
+
+    print s
+    ```
+
+FAQ
+===
+
+*What encryption used?*
+[AES symmetric cipher](https://www.dlitz.net/software/pycrypto/api/current/Crypto.Cipher.AES-module.html)
+
+*What should be the key length?*
+The secret key to use in the symmetric cipher. It must be 16 (AES-128), 24 (AES-192), or 32 (AES-256) bytes long.
+    
+Author
+------
+
+Gabriel Pérez Salzar [@gabrielperezs](https://twitter.com/gabrielperezs)
+
+
