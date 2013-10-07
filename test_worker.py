@@ -15,7 +15,7 @@ def aesjsontest( gearman_worker, gearman_job ):
 
     return response
 
-gm_worker = aesgearman.AESJSON_GearmanWorker( ['localhost'], aeskey='123456781234567812345678' )
+gm_worker = aesgearman.AESJSON_GearmanWorker( ['boxqos.monok'], aeskey='12345678123456781234567812345678' )
 s = gm_worker.register_task( 'aesjsontest', aesjsontest )
 gm_worker.work()
 

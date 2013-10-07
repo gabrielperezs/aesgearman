@@ -56,8 +56,8 @@ class AESJSON_GearmanClient(gearman.GearmanClient):
         if aeskey:
             self.data_encoder = AESDataEncoder
             self.data_encoder.aeskey = aeskey
-            if ( (len(aeskey) % 8) != 0 or len(aeskey) > 32 ):
-                raise NameError('AES key must be either 16, 24, or 32 bytes long');
+            if ( len(aeskey) != 16 and len(aeskey) != 32 ):
+                raise NameError('AES key must be either 16 or 32 bytes long');
 
         super(AESJSON_GearmanClient, self).__init__(host_list=host_list)
         
@@ -69,8 +69,8 @@ class AESJSON_GearmanWorker(gearman.GearmanWorker):
         if aeskey:
             self.data_encoder = AESDataEncoder
             self.data_encoder.aeskey = aeskey
-            if ( (len(aeskey) % 8) != 0 or len(aeskey) > 32 ):
-                raise NameError('AES key must be either 16, 24, or 32 bytes long');
+            if ( len(aeskey) != 16 and len(aeskey) != 32 ):
+                raise NameError('AES key must be either 16 or 32 bytes long');
 
         super(AESJSON_GearmanWorker, self).__init__(host_list=host_list)
 
