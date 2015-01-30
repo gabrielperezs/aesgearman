@@ -2,9 +2,11 @@ import gearman
 import json
 from Crypto import Random
 from Crypto.Cipher import AES
-import base64
-# import hashlib
 # import pdb
+
+PRIORITY_HIGH = gearman.PRIORITY_HIGH
+PRIORITY_LOW = gearman.PRIORITY_LOW
+PRIORITY_NONE = gearman.PRIORITY_NONE
 
 
 class AESCipher:
@@ -15,8 +17,7 @@ class AESCipher:
         self.BS = len(self.key)
 
     def pad(self, s):
-        i = (self.BS - len(s) % self.BS) * chr(self.BS - len(s) % self.BS)
-        return s + i
+        return s + (self.BS - len(s) % self.BS) * chr(self.BS - len(s) % self.BS)
 
     def unpad(self, s):
         return s[0:-ord(s[-1])]
@@ -25,11 +26,10 @@ class AESCipher:
         raw = self.pad(json.dumps(raw))
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return base64.b64encode(iv + cipher.encrypt(raw))
+        return bytes(iv + cipher.encrypt(raw))
 
     def decrypt(self, enc):
         try:
-            enc = base64.b64decode(enc)
             iv = enc[:16]
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
             return json.loads(self.unpad(cipher.decrypt(enc[16:])))
