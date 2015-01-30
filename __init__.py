@@ -2,7 +2,6 @@ import gearman
 import json
 from Crypto import Random
 from Crypto.Cipher import AES
-# import pdb
 
 PRIORITY_HIGH = gearman.PRIORITY_HIGH
 PRIORITY_LOW = gearman.PRIORITY_LOW
@@ -26,13 +25,19 @@ class AESCipher:
         raw = self.pad(json.dumps(raw))
         iv = Random.new().read(AES.block_size)
         cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return bytes(iv + cipher.encrypt(raw))
+        return iv + cipher.encrypt(raw)
 
     def decrypt(self, enc):
         try:
+
+            """In some cases gearman server include an "ufo" first char"""
+            if len(enc) % 16 != 0:
+                enc = enc[1:]
+
             iv = enc[:16]
             cipher = AES.new(self.key, AES.MODE_CBC, iv)
             return json.loads(self.unpad(cipher.decrypt(enc[16:])))
+
         except (RuntimeError, TypeError, NameError):
             raise ValueError('Imposible to decrypt')
 
